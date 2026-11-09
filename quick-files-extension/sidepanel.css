@@ -24,3 +24,7 @@ li.missing, li.locked { opacity:.55; cursor:not-allowed; }
 #empty { text-align:center; padding:30px 0; }
 #dropOverlay { position:fixed; inset:8px; display:flex; align-items:center; justify-content:center; border:2px dashed var(--accent); border-radius:12px; background:color-mix(in srgb, var(--bg) 85%, transparent); font-weight:600; pointer-events:none; }
 [hidden] { display:none !important; }
+.bar { position:sticky; bottom:0; background:var(--bg); padding:10px 0 0; margin-top:16px; }
+.bar button { width:100%; }
+.att { border:none; background:transparent; padding:4px 6px; }
+#status { min-height:18px; margin-top:6px; }

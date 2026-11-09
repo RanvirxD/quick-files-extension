@@ -119,12 +119,16 @@ function render() {
       if (!cur || !cur.file) return e.preventDefault();
       e.dataTransfer.effectAllowed = "copy";
       // Works for dropping into web upload boxes / drop zones.
-      try { e.dataTransfer.items.add(cur.file); } catch {}
+      e.dataTransfer.setData("application/x-quick-files-id", rec.id);
       // Works for dropping onto the desktop / a folder.
       e.dataTransfer.setData("DownloadURL", `${cur.file.type || "application/octet-stream"}:${cur.file.name}:${cur.url}`);
     });
 
-    li.append(icon, meta, x);
+    const att = Object.assign(document.createElement("button"), { className: "att", textContent: "📎", title: "Attach to the current page" });
+    att.disabled = !c.file;
+    att.addEventListener("click", () => attachToActiveTab(rec));
+
+    li.append(icon, meta, att, x);
     listEl.append(li);
   }
   unlockBar.hidden = !anyLocked;
@@ -191,3 +195,57 @@ window.addEventListener("focus", reloadRecords);
   render();
   await loadAll();
 })();
+
+// ---------- Helpers for the page-side script ----------
+function flash(msg) {
+  const el = $("status");
+  el.textContent = msg;
+  setTimeout(() => { if (el.textContent === msg) el.textContent = ""; }, 3500);
+}
+function payload(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve({ ok: true, name: file.name, type: file.type, b64: String(fr.result).split(",")[1] || "" });
+    fr.onerror = () => reject(fr.error);
+    fr.readAsDataURL(file);
+  });
+}
+
+// A web page asks for the file you dragged from the panel.
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  if (!msg || msg.type !== "quickfiles:get") return;
+  (async () => {
+    const rec = records.find((r) => r.id === msg.id);
+    if (!rec) return sendResponse({ ok: false, error: "File not found in Quick Files" });
+    if (!rec.blob) await loadOne(rec); // re-read the latest version from disk
+    const c = cache.get(rec.id);
+    if (!c || !c.file) return sendResponse({ ok: false, error: "File is locked or missing. Click Unlock in Quick Files." });
+    try { sendResponse(await payload(c.file)); } catch (e) { sendResponse({ ok: false, error: "Could not read file" }); }
+  })();
+  return true;
+});
+
+async function attachToActiveTab(rec) {
+  const c = cache.get(rec.id);
+  if (!c || !c.file) return flash("Unlock the file first");
+  const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  if (!tab) return flash("No active tab");
+  try {
+    const r = await chrome.tabs.sendMessage(tab.id, { type: "quickfiles:attach", ...(await payload(c.file)) });
+    flash(r && r.ok ? "Attached to the page" : "No upload box found on this page");
+  } catch {
+    flash("Can't attach here. Reload the page and try again.");
+  }
+}
+
+$("closeBtn").addEventListener("click", async () => {
+  try {
+    if (chrome.sidePanel && chrome.sidePanel.close) {
+      const w = await chrome.windows.getCurrent();
+      await chrome.sidePanel.close({ windowId: w.id });
+      return;
+    }
+  } catch {}
+  window.close();
+  flash("Use the X at the top of the panel to close it.");
+});

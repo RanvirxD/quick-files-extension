@@ -3,8 +3,28 @@
   "name": "Quick Files",
   "version": "1.0.0",
   "description": "Save links to your important files (resume, ID, etc.) and drag them into any website without browsing again.",
-  "permissions": ["sidePanel"],
-  "action": { "default_title": "Quick Files" },
-  "side_panel": { "default_path": "sidepanel.html" },
-  "background": { "service_worker": "background.js" }
+  "permissions": [
+    "sidePanel"
+  ],
+  "action": {
+    "default_title": "Quick Files"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ]
 }
