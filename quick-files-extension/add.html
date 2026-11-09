@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add files to Quick Files</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+  <style>
+    body { max-width: 520px; margin: 40px auto; }
+    #drop { border: 2px dashed var(--line); border-radius: 12px; padding: 36px 16px; text-align: center; margin: 16px 0; }
+    #drop.over { border-color: var(--accent); }
+    #choose { font-size: 15px; padding: 10px 16px; }
+  </style>
+</head>
+<body>
+  <h1>Add files to Quick Files</h1>
+  <div id="drop">
+    <button id="choose">Choose files…</button>
+    <p class="hint">or drop files here</p>
+  </div>
+  <input type="file" id="picker" multiple hidden />
+  <ul id="added"></ul>
+  <p class="hint">Saved files appear in the Quick Files side panel. You can close this tab anytime.</p>
+  <script src="add.js"></script>
+</body>
+</html>

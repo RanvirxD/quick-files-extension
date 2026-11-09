@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Quick Files",
+  "version": "1.0.0",
+  "description": "Save links to your important files (resume, ID, etc.) and drag them into any website without browsing again.",
+  "permissions": ["sidePanel"],
+  "action": { "default_title": "Quick Files" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "background": { "service_worker": "background.js" }
+}

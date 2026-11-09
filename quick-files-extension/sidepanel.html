@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quick Files</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <header>
+    <h1>Quick Files</h1>
+    <button id="addBtn" title="Pick files to save">+ Add files</button>
+  </header>
+
+  <div id="unlockBar" hidden>
+    <span>Chrome needs your OK to read saved files.</span>
+    <button id="unlockBtn">Unlock</button>
+  </div>
+
+  <ul id="list"></ul>
+
+  <div id="empty" hidden>
+    <p>No files saved yet.</p>
+    <p class="hint">Click <b>+ Add files</b> to save your resume or other important files.</p>
+  </div>
+
+  <p class="hint footer">Drag a file from here onto any upload box or drop zone.</p>
+
+  <div id="dropOverlay" hidden>Drop to save</div>
+  <script src="sidepanel.js"></script>
+</body>
+</html>
